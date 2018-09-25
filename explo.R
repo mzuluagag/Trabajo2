@@ -1,5 +1,19 @@
-db <- read.csv2("C:/Users/user/Desktop/Universdad/TAE/trabajo02/registros_autos_entrenamiento.csv",header = TRUE)
+rm(list=ls())
+library(dplyr)
+library(lubridate)
+setwd("D:/Documents/GitHub/Trabajo2")
+db <- read.csv2("Autos TRM.csv",header = TRUE,stringsAsFactors = FALSE)
 db$Fecha <- as.Date(db$Fecha, format = "%d/%m/%Y") #Formating the date
+db$TRM=gsub("\\$", "", db$TRM)
+db$TRM=gsub("\\.", "", db$TRM)
+db$TRM=as.numeric(gsub("\\,", ".", db$TRM))
+dbmeses<-db%>% group_by(Mes=floor_date(Fecha, "month")) %>%summarize(Unidades=sum(Unidades),TRM=mean(TRM))
+dbmeses$Mes<-format(dbmeses$Mes,format="%Y-%m")
+googleaux<-read.csv2("multiTimeline (1).csv",header=T,sep=",")
+dbmeses<-cbind2(dbmeses,googleaux$carro...Colombia.)
+names(dbmeses)[2]<-"uni"
+names(dbmeses)[4]<-"pop"
+names(dbmeses)[1]<-"mes"
 
 sep2012 <- db[which(format(db$Fecha, "%Y") == 2012),]
 sep2013 <- db[which(format(db$Fecha, "%Y") == 2013),]
