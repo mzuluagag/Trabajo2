@@ -8,12 +8,15 @@ db$TRM=gsub("\\$", "", db$TRM)
 db$TRM=gsub("\\.", "", db$TRM)
 db$TRM=as.numeric(gsub("\\,", ".", db$TRM))
 dbmeses<-db%>% group_by(Mes=floor_date(Fecha, "month")) %>%summarize(Unidades=sum(Unidades),TRM=mean(TRM))
-dbmeses$Mes<-format(dbmeses$Mes,format="%Y-%m")
+dbmeses$Mes<-as.Date(dbmeses$Mes)
 googleaux<-read.csv2("multiTimeline (1).csv",header=T,sep=",")
 dbmeses<-cbind2(dbmeses,googleaux$carro...Colombia.)
 names(dbmeses)[2]<-"uni"
 names(dbmeses)[4]<-"pop"
 names(dbmeses)[1]<-"mes"
+attach(dbmeses)
+plot(mes,TRM,type="l",lwd=2)
+plot(mes,uni,type="l",col="red",lwd=2)
 
 sep2012 <- db[which(format(db$Fecha, "%Y") == 2012),]
 sep2013 <- db[which(format(db$Fecha, "%Y") == 2013),]
