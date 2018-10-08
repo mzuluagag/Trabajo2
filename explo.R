@@ -37,6 +37,8 @@ empleoaux$fecha<-as.Date(paste(empleoaux$fecha,1,sep="-"),"%Y-%m-%d")
 empleoaux<-empleoaux[order(empleoaux$fecha),]
 dbmeses<-cbind2(dbmeses,empleoaux$templeo)
 dbmeses<-cbind2(dbmeses,empleoaux$tdesem)
+names(dbmeses)[5]<-"templeo"
+names(dbmeses)[6]<-"tdesem"
 
 #Incluir tasa de empleo
 vtemp<-rep(empleoaux$templeo[1],monthDays(empleoaux$fecha[1]))
