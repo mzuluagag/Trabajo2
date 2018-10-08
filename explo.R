@@ -11,6 +11,7 @@ db$TRM=as.numeric(gsub("\\,", ".", db$TRM))
 db<-cbind2(db,month(db$Fecha))
 db<-cbind2(db,weekdays(db$Fecha))
 names(db)[4]<-"mes"
+names(db)[5]<-"dia"
 #Creación de dataframe por meses
 attach(db)
 dbmeses<-db%>%group_by(Mes=floor_date(Fecha,"month"))%>%summarise(Unidades=sum(Unidades),TRM=mean(TRM))
@@ -34,31 +35,96 @@ names(empleoaux)[2]<-"templeo"
 names(empleoaux)[3]<-"tdesem"
 empleoaux$fecha<-as.Date(paste(empleoaux$fecha,1,sep="-"),"%Y-%m-%d")
 empleoaux<-empleoaux[order(empleoaux$fecha),]
+dbmeses<-cbind2(dbmeses,empleoaux$templeo)
+dbmeses<-cbind2(dbmeses,empleoaux$tdesem)
 
+#Incluir tasa de empleo
+vtemp<-rep(empleoaux$templeo[1],monthDays(empleoaux$fecha[1]))
+for (i in 2:nrow(empleoaux)){
+  auxtemp<-rep(empleoaux$templeo[i],monthDays(empleoaux$fecha[i]))
+  vtemp<-append(vtemp,auxtemp)
+}
+db<-cbind2(db,vtemp)
+names(db)[7]<-"templeo"
 
+#Incluir tasa de desempleo
+vtdesem<-rep(empleoaux$tdesem[1],monthDays(empleoaux$fecha[1]))
+for (i in 2:nrow(empleoaux)){
+  auxtdesem<-rep(empleoaux$tdesem[i],monthDays(empleoaux$fecha[i]))
+  vtdesem<-append(vtdesem,auxtdesem)
+}
+db<-cbind2(db,vtdesem)
+names(db)[8]<-"tdesem"
+
+#Analizar los datos por día de la semana
+semanacompra<-db%>%group_by(dia)%>%summarise(Unidades=sum(Unidades))
+semanacompra$dia <- factor(semanacompra$dia, levels= c("lunes", "martes","miércoles", "jueves", "viernes", "sábado", "domingo"))
+semanacompra<-semanacompra[order(semanacompra$dia), ]
+
+#Análisis por día de la semana
+yy=barplot(semanacompra$Unidades)
+axis(1, at=yy,labels=semanacompra$dia, tick=FALSE, las=2, line=-0.5)
+
+#Analizar los datos por mes
+mescompra<-db%>%group_by(mes)%>%summarise(Unidades=sum(Unidades))
+
+#Análisis de meses y compras
+xx=barplot(mescompra$Unidades)
+axis(1, at=yy,labels=c("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"), tick=FALSE, las=2, line=-0.5, cex.axis=0.9)
+
+#Análisis del dólar y de los carros registrados por meses(evasión de ruido promediando)
 attach(dbmeses)
-plot(mes,TRM,type="l",lwd=2)
-plot(mes,uni,type="l",col="red",lwd=2)
 
-sep2012 <- db[which(format(db$Fecha, "%Y") == 2012),]
-sep2013 <- db[which(format(db$Fecha, "%Y") == 2013),]
-sep2014 <- db[which(format(db$Fecha, "%Y") == 2014),]
-sep2015 <- db[which(format(db$Fecha, "%Y") == 2015),]
-sep2016 <- db[which(format(db$Fecha, "%Y") == 2016),]
-sep2017 <- db[which(format(db$Fecha, "%Y") == 2017),]
+# plot(mes,uni,type="l",col="red",lwd=2)
+par(mfrow=c(3,2))
+plot(mes,TRM,type="l")
+plot(mes,uni,type="l",ylab="Unidades")
+plot(mes,pop,type="l",ylab="Popularidad")
+plot(mes,templeo,type="l",ylab="Tasa de empleo")
+plot(mes,tdesem,type="l",ylab="Tasa de desempleo")
 
-s2 <- sum(sep2012$Unidades)
-s3 <- sum(sep2013$Unidades)
-s4 <- sum(sep2014$Unidades)
-s5 <- sum(sep2015$Unidades)
-s6 <- sum(sep2016$Unidades)
-s7 <- sum(sep2017$Unidades)
 
-barplot(height = c(s2,s3,s4,s5,s6,s7),names.arg = c("2012","2013","2014","2015","2016","2017"),
-        main = "Número de carros registrados",xlab = "Año",ylab="Cantidad")
-s2
-s3
-s4
-s5
-s6
-s7
+
+#IPC
+ipc<-read.csv2("ipc.csv",header=T)
+ipc<-ipc[-3]
+ipc<-ipc[-3]
+names(ipc)[3]<-"varanual"
+ipc$fecha<-as.Date(paste(ipc$fecha,1,sep="-"),"%Y-%m-%d")
+dbmeses<-cbind2(dbmeses,ipc$IPC)
+dbmeses<-cbind2(dbmeses,ipc$varanual)
+dbmeses<-cbind2(dbmeses,ipc$PromGaso)
+names(dbmeses)[7]<-"IPC"
+names(dbmeses)[8]<-"varanualipc"
+names(dbmeses)[9]<-"PromGaso"
+
+ipc$varanual=gsub("\\%", "", ipc$varanual)
+ipc$varanual=as.numeric(gsub("\\,", ".", ipc$varanual))
+
+vipc<-rep(ipc$IPC[1],monthDays(ipc$fecha[1]))
+for (i in 2:nrow(ipc)){
+  auxipc<-rep(ipc$IPC[i],monthDays(ipc$fecha[i]))
+  vipc<-append(vipc,auxipc)
+}
+db<-cbind2(db,vipc)
+names(db)[9]<-"IPC"
+
+
+vvaripc<-rep(ipc$varanual[1],monthDays(ipc$fecha[1]))
+for (i in 2:nrow(ipc)){
+  auxvaripc<-rep(ipc$varanual[i],monthDays(ipc$fecha[i]))
+  vvaripc<-append(vvaripc,auxvaripc)
+}
+db<-cbind2(db,vvaripc)
+names(db)[10]<-"varanualipc"
+
+vpromgaso<-rep(ipc$PromGaso[1],monthDays(ipc$fecha[1]))
+for (i in 2:nrow(ipc)){
+  auxvaripc<-rep(ipc$PromGaso[i],monthDays(ipc$fecha[i]))
+  vpromgaso<-append(vpromgaso,auxvaripc)
+}
+db<-cbind2(db,vpromgaso)
+names(db)[11]<-"Promgaso"
+
+attach(db)
+modelo1<-lm(Unidades~TRM+mes+dia+pop+templeo+tdesem)
