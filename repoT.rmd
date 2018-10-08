@@ -3,26 +3,32 @@ title: "Reporte técnico"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+<h1 align="center"><b>Modelo predictor de carros registrados en el RUNT</b><hr><br><br></h1>
 
-## R Markdown
+<h2 align="center"><b>Asignatura</b></h2>
+<h3 align="center">Técnicas de aprendizaje estadístico</h3>
+<h3 align="center">Universidad Nacional de Colombia</h3>
+<h3 align="center">Sede Medellín</h3>
+<h3 align="center">Facultad de minas</h3>
+<h3 align="center">2018-2<br><br></h3>
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+<h2 align="center"><b>Profesor:</b></h2>
+<h3 align="center">Juan David Ospina Arango<br><br></h3>
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+<h2 align="center"><b>Hecho por:</b></h2>
+<h3 align="center">Santiago Restrepo Álvarez</h3>
+<h3 align="center">Mateo Zuluaga Giraldo</h3>
+<h3 align="center">Sebastian Ramírez Tamayo</h3>
+<h3 align="center">David Ossa Saldarriaga</h3>
+<h3 align="center">Daniel Restrepo Mejía<hr><br><br><br></h3>
 
-```{r cars}
-summary(cars)
-```
+<h3><b>Introducción:</b></h3>
+<p style = "font-size:20px" align="justify">
 
-## Including Plots
+</p><hr>
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+<h3><b>Entendimiento inicial:</b></h3>
+<p style = "font-size:20px" align="justify">
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+</p><hr>
