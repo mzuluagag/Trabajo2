@@ -1,5 +1,6 @@
 rm(list=ls())
 library(dplyr)
+library(MASS)
 library(Hmisc)
 library(lubridate)
 setwd("D:/Documents/GitHub/Trabajo2")
@@ -29,18 +30,21 @@ for (i in 2:nrow(dbmeses)){
 }
 db<-cbind2(db,vpop)
 names(db)[6]<-"pop"
+#Invocar tasa de empleo y desempleo mensual
 empleoaux<-read.csv2("Empleo_desempleo.csv",header=FALSE,stringsAsFactors = FALSE)
 names(empleoaux)[1]<-"fecha"
 names(empleoaux)[2]<-"templeo"
 names(empleoaux)[3]<-"tdesem"
+#Darle formato de día
 empleoaux$fecha<-as.Date(paste(empleoaux$fecha,1,sep="-"),"%Y-%m-%d")
 empleoaux<-empleoaux[order(empleoaux$fecha),]
+#Incluir en el data por meses
 dbmeses<-cbind2(dbmeses,empleoaux$templeo)
 dbmeses<-cbind2(dbmeses,empleoaux$tdesem)
 names(dbmeses)[5]<-"templeo"
 names(dbmeses)[6]<-"tdesem"
 
-#Incluir tasa de empleo
+#Incluir tasa de empleo por días 
 vtemp<-rep(empleoaux$templeo[1],monthDays(empleoaux$fecha[1]))
 for (i in 2:nrow(empleoaux)){
   auxtemp<-rep(empleoaux$templeo[i],monthDays(empleoaux$fecha[i]))
@@ -72,18 +76,10 @@ mescompra<-db%>%group_by(mes)%>%summarise(Unidades=sum(Unidades))
 
 #Análisis de meses y compras
 xx=barplot(mescompra$Unidades)
-axis(1, at=yy,labels=c("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"), tick=FALSE, las=2, line=-0.5, cex.axis=0.9)
+axis(1, at=xx,labels=c("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"), tick=FALSE, las=2, line=-0.5, cex.axis=0.9)
 
 #Análisis del dólar y de los carros registrados por meses(evasión de ruido promediando)
-attach(dbmeses)
 
-# plot(mes,uni,type="l",col="red",lwd=2)
-par(mfrow=c(3,2))
-plot(mes,TRM,type="l")
-plot(mes,uni,type="l",ylab="Unidades")
-plot(mes,pop,type="l",ylab="Popularidad")
-plot(mes,templeo,type="l",ylab="Tasa de empleo")
-plot(mes,tdesem,type="l",ylab="Tasa de desempleo")
 
 
 
@@ -128,5 +124,69 @@ for (i in 2:nrow(ipc)){
 db<-cbind2(db,vpromgaso)
 names(db)[11]<-"Promgaso"
 
+#Salario mínimo Colombia
+salmin<-c(566700,589000,616000,644350,689455,737717)
+anosal<-seq(2012,2017)
+salarmin<-data.frame(anosal,salmin)
+
+salarmin$anosal<-paste(salarmin$anosal,1,sep="-")
+salarmin$anosal<-as.Date(paste(salarmin$anosal,1,sep="-"),"%Y-%m-%d")
+
+vsal<-rep(salarmin$salmin[1],yearDays(salarmin$anosal[1]))
+for (i in 2:nrow(salarmin)){
+  auxsal<-rep(salarmin$salmin[i],yearDays(salarmin$anosal[i]))
+  vsal<-append(vsal,auxsal)
+}
+db<-cbind2(db,vsal)
+names(db)[12]<-"salmini"
+
+# diasaux<-c("lunes", "martes","miércoles", "jueves", "viernes", "sábado", "domingo")
+# for (i in 1:7){
+#   db$dia<-gsub(diasaux[i],i,db$dia)
+# }
+
+# vTRM<-rep(dbmeses$TRM[1],monthDays(dbmeses$mes[1]))
+# for (i in 2:nrow(dbmeses)){
+#   auxtrm<-rep(dbmeses$TRM[i],monthDays(dbmeses$mes[i]))
+#   vTRM<-append(vTRM,auxtrm)
+# }
+# db$TRM<-vTRM
+
+db<-subset(db, format(as.Date(db$Fecha),"%Y")!=2017)
+dbmeses<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")!=2017)
 attach(db)
 modelo1<-lm(Unidades~TRM+mes+dia+pop+templeo+tdesem)
+#
+mod_pois_glm<-glm(Unidades~TRM+mes+dia+pop+templeo+tdesem+IPC+varanualipc+Promgaso+salmini,poisson)
+
+modelosel<-stepAIC(object=mod_pois_glm, trace=FALSE, direction="backward", k=2)
+
+attach(dbmeses)
+
+# plot(mes,uni,type="l",col="red",lwd=2)
+par(mfrow=c(2,2))
+plot(mes,TRM,type="l")
+plot(mes,uni,type="l",ylab="Unidades",col="red",lwd=2)
+plot(mes,pop,type="l",ylab="Popularidad")
+plot(mes,templeo,type="l",ylab="Tasa de empleo")
+plot(mes,tdesem,type="l",ylab="Tasa de desempleo")
+plot(mes,IPC,type="l",ylab="IPC")
+plot(mes,varanualipc,type="l",ylab="Variación anual IPC")
+plot(mes,varanualipc,type="l",ylab="Costo promedio en dólares barril de petróleo NY")
+
+#Analizar los datos por día de la semana
+semanacompra<-db%>%group_by(dia)%>%summarise(Unidades=sum(Unidades))
+semanacompra$dia <- factor(semanacompra$dia, levels= c("lunes", "martes","miércoles", "jueves", "viernes", "sábado", "domingo"))
+semanacompra<-semanacompra[order(semanacompra$dia), ]
+
+#Análisis por día de la semana
+yy=barplot(semanacompra$Unidades)
+axis(1, at=yy,labels=semanacompra$dia, tick=FALSE, las=2, line=-0.5)
+
+#Analizar los datos por mes
+mescompra<-db%>%group_by(mes)%>%summarise(Unidades=sum(Unidades))
+
+#Análisis de meses y compras
+xx=barplot(mescompra$Unidades)
+axis(1, at=xx,labels=c("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"), tick=FALSE, las=2, line=-0.5, cex.axis=0.9)
+
