@@ -24,11 +24,27 @@ output: html_document
 
 <h3><b>Introducción:</b></h3>
 <p style = "font-size:20px" align="justify">
-
+El siguiente trabajo, gira en torno a crear un modelo predictivo de los automóviles registrados en el RUNT, ¿cómo se logrará esto?, más adelante veremos cómo a partir de un archivo que contiene el número de automóviles registrados diariamente en el RUNT desde 2012 hasta 2017, se puede "entrenar" un modelo (un buen modelo) para predecir los automóviles que se registrarán en un futuro.
 </p><hr>
 
 
 <h3><b>Entendimiento inicial:</b></h3>
 <p style = "font-size:20px" align="justify">
+Todo automóvil que se quiera poner en circulación en el país, debe antes ser registrado en el Registro Único Nacional de Transito RUNT, con el fin de determinar la propiedad, características y situación jurídica de los vehículos automotores terrestres, este registro se lleva a cabo en los días hábiles y permite principalmente tener un registro completo de todos los automóbiles terrestres que circulas sobre el territorio nacional, permite conocer las fichas técnicas de homologación, emisiones de gases, entre otras.
+A continuación en el análisis técnico se verá detalladamente el procedimiento empleado para construir el modelo.
+</p><hr>
+
+<h3><b></b></h3>
+<p style = "font-size:20px" align="justify">
 
 </p><hr>
+
+
+<h3><b>Referencias:</b></h3>
+<p style = "font-size:20px" align="justify">
+1. <a href = "https://www.runt.com.co/registros-runt/rna"> Página del RUNT </a>
+</p><hr>
+
+
+
+
