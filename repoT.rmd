@@ -1,8 +1,8 @@
 ---
-title: "Reporte técnico"
+title:
 output: html_document
 ---
-
+<br><br><br>
 <h1 align="center"><b>Modelo predictor de carros registrados en el RUNT</b><hr><br><br></h1>
 
 <h2 align="center"><b>Asignatura</b></h2>
@@ -34,10 +34,19 @@ Todo automóvil que se quiera poner en circulación en el país, debe antes ser 
 A continuación en el análisis técnico se verá detalladamente el procedimiento empleado para construir el modelo.
 </p><hr>
 
-<h3><b></b></h3>
+<h3><b>Análisis técnico</b></h3>
 <p style = "font-size:20px" align="justify">
-
+Después de esta breve contextualización, se dará inicio a la explicación del cómo se construyó el proyecto; inicialmente se nos proporcionó un único archivo plano que contenía todos los registros de los automóviles registrados diariamente en el RUNT, el archivo contiene dos columnas, una de fecha y otra de número de autos registrádos, y tiene una fila por cada día comprendido entre el primero de Enero de 2012 y el treinta y uno de Diciembre de 2017, el principal requisito del modelo, es que sea entrenado con los datos de 2012 hasta 2016 y usar los datos de 2017 como validación y posteriormente predecir todo el primer semestre del 2018, cabe aclarar que no tenemos los datos reales del 2018, estos solo los tiene el profesor.
+Como solo se tiene una variable, es necesario buscar por cuenta propia otras variables, de las que podamos descargar sus registros en este lapso de tiempo y que estas variables mejoren la predicción del modelo no existe ningún criterio objetivo para seleccionar estas nuevas variables más que el criterio grupal; las variables que inicialmente elegimos como candidatas para estar en el modelo son las siguientes:
 </p><hr>
+<ul style = "font-size:20px">
+  <li>***Incluir acá lista***
+</ul>
+
+<p style = "font-size:20px" align="justify">
+***Acá va la explicación de cada variable***
+</p><hr>
+
 
 
 <h3><b>Referencias:</b></h3>
