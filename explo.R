@@ -9,10 +9,13 @@ db$Fecha <- as.Date(db$Fecha, format = "%d/%m/%Y") #Formating the date
 db$TRM=gsub("\\$", "", db$TRM)
 db$TRM=gsub("\\.", "", db$TRM)
 db$TRM=as.numeric(gsub("\\,", ".", db$TRM))
+db$TRMdesfas=gsub("\\$", "", db$TRMdesfas)
+db$TRMdesfas=gsub("\\.", "", db$TRMdesfas)
+db$TRMdesfas=as.numeric(gsub("\\,", ".", db$TRMdesfas))
 db<-cbind2(db,month(db$Fecha))
 db<-cbind2(db,weekdays(db$Fecha))
-names(db)[4]<-"mes"
-names(db)[5]<-"dia"
+names(db)[5]<-"mes"
+names(db)[6]<-"dia"
 #Creación de dataframe por meses
 attach(db)
 dbmeses<-db%>%group_by(Mes=floor_date(Fecha,"month"))%>%summarise(Unidades=sum(Unidades),TRM=mean(TRM))
@@ -29,7 +32,7 @@ for (i in 2:nrow(dbmeses)){
   vpop<-append(vpop,auxpop)
 }
 db<-cbind2(db,vpop)
-names(db)[6]<-"pop"
+names(db)[7]<-"pop"
 #Invocar tasa de empleo y desempleo mensual
 empleoaux<-read.csv2("Empleo_desempleo.csv",header=FALSE,stringsAsFactors = FALSE)
 names(empleoaux)[1]<-"fecha"
@@ -51,7 +54,7 @@ for (i in 2:nrow(empleoaux)){
   vtemp<-append(vtemp,auxtemp)
 }
 db<-cbind2(db,vtemp)
-names(db)[7]<-"templeo"
+names(db)[8]<-"templeo"
 
 #Incluir tasa de desempleo
 vtdesem<-rep(empleoaux$tdesem[1],monthDays(empleoaux$fecha[1]))
@@ -60,7 +63,7 @@ for (i in 2:nrow(empleoaux)){
   vtdesem<-append(vtdesem,auxtdesem)
 }
 db<-cbind2(db,vtdesem)
-names(db)[8]<-"tdesem"
+names(db)[9]<-"tdesem"
 
 #Analizar los datos por día de la semana
 semanacompra<-db%>%group_by(dia)%>%summarise(Unidades=sum(Unidades))
@@ -68,15 +71,15 @@ semanacompra$dia <- factor(semanacompra$dia, levels= c("lunes", "martes","miérc
 semanacompra<-semanacompra[order(semanacompra$dia), ]
 
 #Análisis por día de la semana
-yy=barplot(semanacompra$Unidades)
-axis(1, at=yy,labels=semanacompra$dia, tick=FALSE, las=2, line=-0.5)
+# yy=barplot(semanacompra$Unidades)
+# axis(1, at=yy,labels=semanacompra$dia, tick=FALSE, las=2, line=-0.5)
 
 #Analizar los datos por mes
 mescompra<-db%>%group_by(mes)%>%summarise(Unidades=sum(Unidades))
 
 #Análisis de meses y compras
-xx=barplot(mescompra$Unidades)
-axis(1, at=xx,labels=c("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"), tick=FALSE, las=2, line=-0.5, cex.axis=0.9)
+# xx=barplot(mescompra$Unidades)
+# axis(1, at=xx,labels=c("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"), tick=FALSE, las=2, line=-0.5, cex.axis=0.9)
 
 #Análisis del dólar y de los carros registrados por meses(evasión de ruido promediando)
 
@@ -105,7 +108,7 @@ for (i in 2:nrow(ipc)){
   vipc<-append(vipc,auxipc)
 }
 db<-cbind2(db,vipc)
-names(db)[9]<-"IPC"
+names(db)[10]<-"IPC"
 
 
 vvaripc<-rep(ipc$varanual[1],monthDays(ipc$fecha[1]))
@@ -114,7 +117,7 @@ for (i in 2:nrow(ipc)){
   vvaripc<-append(vvaripc,auxvaripc)
 }
 db<-cbind2(db,vvaripc)
-names(db)[10]<-"varanualipc"
+names(db)[11]<-"varanualipc"
 
 vpromgaso<-rep(ipc$PromGaso[1],monthDays(ipc$fecha[1]))
 for (i in 2:nrow(ipc)){
@@ -122,7 +125,7 @@ for (i in 2:nrow(ipc)){
   vpromgaso<-append(vpromgaso,auxvaripc)
 }
 db<-cbind2(db,vpromgaso)
-names(db)[11]<-"Promgaso"
+names(db)[12]<-"Promgaso"
 
 #Salario mínimo Colombia
 salmin<-c(566700,589000,616000,644350,689455,737717)
@@ -138,7 +141,7 @@ for (i in 2:nrow(salarmin)){
   vsal<-append(vsal,auxsal)
 }
 db<-cbind2(db,vsal)
-names(db)[12]<-"salmini"
+names(db)[13]<-"salmini"
 
 # diasaux<-c("lunes", "martes","miércoles", "jueves", "viernes", "sábado", "domingo")
 # for (i in 1:7){
@@ -152,14 +155,42 @@ names(db)[12]<-"salmini"
 # }
 # db$TRM<-vTRM
 
-db<-subset(db, format(as.Date(db$Fecha),"%Y")!=2017)
-dbmeses<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")!=2017)
-attach(db)
-modelo1<-lm(Unidades~TRM+mes+dia+pop+templeo+tdesem)
+
+
+dtf<-read.csv2("DTF.csv",header=F)
+names(dtf)[1]<-"fecha"
+names(dtf)[2]<-"dtf"
+dtf$fecha<-as.Date(paste(dtf$fecha,1,sep="-"),"%Y-%m-%d")
+dtf<-dtf[order(dtf$fecha),]
+dtf$dtf<-gsub("%","",dtf$dtf)
+
+vdtf<-rep(dtf$dtf[1],monthDays(dtf$fecha[1]))
+for (i in 2:nrow(dtf)){
+  auxdtf<-rep(dtf$dtf[i],monthDays(dtf$fecha[i]))
+  vdtf<-append(vdtf,auxdtf)
+}
+db<-cbind2(db,vdtf)
+names(db)[14]<-"detf"
+db$detf<-gsub(",",".",db$detf)
+db$detf<-as.numeric(db$detf)
+
+# db<-subset(db, format(as.Date(db$Fecha),"%Y")!=2017)
+# dbmeses<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")!=2017)
+db2016<-subset(db, format(as.Date(db$Fecha),"%Y")!=2017)
+dbmeses2016<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")!=2017)
+db2017<-subset(db, format(as.Date(db$Fecha),"%Y")==2017)
+dbmeses2017<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")==2017)
+attach(db2016)
+modelo1<-lm(Unidades~mes+dia+pop+templeo+tdesem+IPC+varanualipc+Promgaso+salmini+detf)
 #
-mod_pois_glm<-glm(Unidades~TRM+mes+dia+pop+templeo+tdesem+IPC+varanualipc+Promgaso+salmini,poisson)
+mod_pois_glm<-glm(Unidades~TRM+mes+dia+pop+templeo+tdesem+IPC+varanualipc+Promgaso+salmini+detf,poisson)
 
 modelosel<-stepAIC(object=mod_pois_glm, trace=FALSE, direction="backward", k=2)
+
+1-(modelosel$deviance/modelosel$null.deviance)
+
+ccfvalues<-ccf(db2016$TRM,db2016$Unidades,200)
+min(ccfvalues)
 
 attach(dbmeses)
 
