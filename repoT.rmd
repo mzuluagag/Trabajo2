@@ -47,11 +47,33 @@ Como solo se tiene una variable, es necesario buscar por cuenta propia otras var
 ***Acá va la explicación de cada variable***
 </p><hr>
 
-
+<h3><b>Enfoque</b></h3>
+<p style = "font-size:20px" align="justify">
+Después de todo este esfuerzo para construir este modelo que acabamos de ver, surgirá la pregunta ¿para qué todo esto? pues bueno, el proyecto podría no tener un enfoque único, ya que este modelo podría ser de mucha utilidad para el estado, o empresas privadas, a continuación veremos tres ejemplos prácticos.<br>
+En primer lugar y el ejemplo más trivial estaría en la contratación del personal, ya que en número de registros de vehículos en un día, se traduce en personas haciendo fila, así que este modelo serviría para hacer una contratación dinámica, es decir que se contrate más personal, en los meses del año en los que más autos se registran para agilizar la atención y así mismo contratar menos personal en los meses con menos registros, para así ahorar recursos.<br>
+Como segundo ejemplo, está la infraestructura vial y políticas de movilidad, ya que el modelo le serviría al estado para predecir el crecimiento del parque automotor, para implementar políticas de movilidad o construir infraestructura.<br>
+Como último ejemplo, tenemos al seector privado, especificamente a las compañías que fabrican y venden autos, ya que estas, sabiendo la porción de mercado que tienen frente a la competencia, antes de inundar el mercado con más autos de los que van a vender, podrían predecir estas cifras, para no incurrir en perdidas por tenes demasiadas existencias de vehículos en venta, también les puede servir antes de implementar políticas de expansión.
+</p><hr>
 
 <h3><b>Referencias:</b></h3>
 <p style = "font-size:20px" align="justify">
 1. <a href = "https://www.runt.com.co/registros-runt/rna"> Página del RUNT </a>
+2. <a href = "https://www.fedesarrollo.org.co/sites/default/files/encuestas_documentos/historico_indice_de_confianza_del_consumidor_eoc.pdf"> Indice de confianza del consumidor  </a>
+</p><br>
+
+<p style = "font-size:20px" align="justify">
+Todo el proyecto fue desarrollado con el lenguaje de programación libre R.<br>
+R Core Team (2018). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/. <br>
+Y se usaro los siguientes paquetes:
+<ul style = "font-size:17px">
+  <li><b>dplyr</b><br>Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2018). dplyr: A Grammar of Data Manipulation. R package version 0.7.6.
+  https://CRAN.R-project.org/package=dplyr
+  <li><b>MASS</b><br>Venables, W. N. & Ripley, B. D. (2002) Modern Applied Statistics with S. Fourth Edition. Springer, New York. ISBN 0-387-95457-0
+  <li><b>Hmisc</b><br>Frank E Harrell Jr, with contributions from Charles Dupont and many others. (2018). Hmisc: Harrell Miscellaneous. R package version 4.1-1.
+  https://CRAN.R-project.org/package=Hmisc
+  <li><b>lubridate</b><br>Garrett Grolemund, Hadley Wickham (2011). Dates and Times Made Easy with lubridate. Journal of Statistical Software, 40(3), 1-25. URL
+  http://www.jstatsoft.org/v40/i03/.
+</ul>
 </p><hr>
 
 
