@@ -2,6 +2,7 @@ rm(list=ls())
 library(dplyr)
 library(MASS)
 library(Hmisc)
+library(xlsx)
 library(lubridate)
 setwd("D:/Documents/GitHub/Trabajo2")
 db <- read.csv2("Autos TRM.csv",header = TRUE,stringsAsFactors = FALSE)
@@ -14,6 +15,7 @@ db$TRMdesfas=gsub("\\.", "", db$TRMdesfas)
 db$TRMdesfas=as.numeric(gsub("\\,", ".", db$TRMdesfas))
 db<-cbind2(db,month(db$Fecha))
 db<-cbind2(db,weekdays(db$Fecha))
+
 names(db)[5]<-"mes"
 names(db)[6]<-"dia"
 #Creación de dataframe por meses
@@ -174,6 +176,23 @@ names(db)[14]<-"detf"
 db$detf<-gsub(",",".",db$detf)
 db$detf<-as.numeric(db$detf)
 
+icc<-read.csv2("ICC.csv", header=T, sep=",")
+icc$fecha<-as.Date(paste(icc$fecha,1,sep="-"),"%Y-%m-%d")
+icc<-subset(icc, format(as.Date(icc$fecha),"%Y")!=2018)
+vicc<-rep(icc$valor[1],monthDays(icc$fecha[1]))
+for (i in 2:nrow(icc)){
+  auxicc<-rep(icc$valor[i],monthDays(icc$fecha[i]))
+  vicc<-append(vicc,auxicc)
+}
+db<-cbind2(db,vicc)
+names(db)[15]<-"iconf"
+db$iconf<-gsub(",",".",db$iconf)
+db$iconf<-as.numeric(db$iconf)
+db<-cbind2(db,year(db$Fecha))
+names(db)[16]<-"ano"
+db<-cbind2(db,day(db$Fecha))
+names(db)[17]<-"dmes"
+
 # db<-subset(db, format(as.Date(db$Fecha),"%Y")!=2017)
 # dbmeses<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")!=2017)
 db2016<-subset(db, format(as.Date(db$Fecha),"%Y")!=2017)
@@ -181,18 +200,57 @@ dbmeses2016<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")!=2017)
 db2017<-subset(db, format(as.Date(db$Fecha),"%Y")==2017)
 dbmeses2017<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")==2017)
 attach(db2016)
-modelo1<-lm(Unidades~mes+dia+pop+templeo+tdesem+IPC+varanualipc+Promgaso+salmini+detf)
+modelo1<-lm(Unidades~mes+dia+pop+templeo+tdesem+IPC+varanualipc+Promgaso+salmini+detf+iconf)
+modelosel<-stepAIC(object=modelo1, trace=FALSE, direction="backward", k=2)
 #
-mod_pois_glm<-glm(Unidades~TRM+mes+dia+pop+templeo+tdesem+IPC+varanualipc+Promgaso+salmini+detf,poisson)
+#mod_pois_glm<-glm(Unidades~mes+dia+templeo+tdesem+IPC+Promgaso+salmini+detf+iconf,poisson)
+#modelosel<-stepAIC(object=mod_pois_glm, trace=FALSE, direction="backward", k=2)
 
-modelosel<-stepAIC(object=mod_pois_glm, trace=FALSE, direction="backward", k=2)
+mod_pois_glm<-glm(Unidades~mes+dia+ano+dmes,poisson)
+1-(mod_pois_glm$deviance/mod_pois_glm$null.deviance)
+# 1-(modelosel$deviance/modelosel$null.deviance)
+# prueba<-db2017[6,]
+# round(exp(predict.glm(mod_pois_glm,newdata=prueba)))
+# ccfvalues<-ccf(db2016$TRM,db2016$Unidades,200)
+# min(ccfvalues)
 
-1-(modelosel$deviance/modelosel$null.deviance)
+#predict.glm(mod_pois_glm,newdata=db2017)
+estim<-exp(predict.glm(mod_pois_glm,newdata=db2017))
+estim<-as.data.frame(estim)
+names(estim)[1]<-"fit"
 
-ccfvalues<-ccf(db2016$TRM,db2016$Unidades,200)
-min(ccfvalues)
+# estim$fit<-round(estim$fit)
 
+#R2
+r2<-1-(sum((db2017$Unidades-estim$fit)^2)/sum((db2017$Unidades-mean(db2017$Unidades))^2))
 attach(dbmeses)
+
+#Función descomposición Shiny
+daygen<-function(fi,ff){
+  vecfec<-as.data.frame(seq(as.Date(fi),as.Date(ff),by="day"))
+  names(vecfec)[1]<-"Fecha"
+  vecfec$dia<-weekdays(vecfec$Fecha)
+  vecfec$mes<-month(vecfec$Fecha)
+  vecfec$ano<-year(vecfec$Fecha)
+  vecfec$dmes<-day(vecfec$Fecha)
+  return(vecfec)
+  
+}
+
+predic2018<-read.csv2("fecha.csv",header=F)
+names(predic2018)[1]<-"Fecha"
+predic2018$Fecha<- as.Date(predic2018$Fecha, format = "%d/%m/%Y")
+predic2018$mes<-month(predic2018$Fecha)
+predic2018$dia<-weekdays(predic2018$Fecha)
+predic2018$ano<-year(predic2018$Fecha)
+predic2018$dmes<-day(predic2018$Fecha)
+aux2018<-exp(predict.glm(mod_pois_glm,newdata=predic2018))
+pred2018<-predic2018$Fecha
+pred2018<-as.data.frame(predic2018$Fecha)
+pred2018<-cbind2(pred2018,aux2018)
+names(pred2018)[2]<-"Estimado"
+names(pred2018)[1]<-"Fecha"
+
 
 # plot(mes,uni,type="l",col="red",lwd=2)
 par(mfrow=c(2,2))
