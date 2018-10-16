@@ -16,6 +16,7 @@ db$TRMdesfas=as.numeric(gsub("\\,", ".", db$TRMdesfas))
 db<-cbind2(db,month(db$Fecha))
 db<-cbind2(db,weekdays(db$Fecha))
 
+
 names(db)[5]<-"mes"
 names(db)[6]<-"dia"
 #Creación de dataframe por meses
@@ -193,12 +194,18 @@ names(db)[16]<-"ano"
 db<-cbind2(db,day(db$Fecha))
 names(db)[17]<-"dmes"
 
+db$dia<-as.character(db$dia)
+db$dia[db$dia=="miércoles"]<-"miercoles"
+db$dia[db$dia=="sábado"]<-"sabado"
+db$dia<-as.factor(db$dia)
 # db<-subset(db, format(as.Date(db$Fecha),"%Y")!=2017)
 # dbmeses<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")!=2017)
 db2016<-subset(db, format(as.Date(db$Fecha),"%Y")!=2017)
 dbmeses2016<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")!=2017)
 db2017<-subset(db, format(as.Date(db$Fecha),"%Y")==2017)
 dbmeses2017<-subset(dbmeses, format(as.Date(dbmeses$mes),"%Y")==2017)
+
+
 attach(db2016)
 modelo1<-lm(Unidades~mes+dia+pop+templeo+tdesem+IPC+varanualipc+Promgaso+salmini+detf+iconf)
 modelosel<-stepAIC(object=modelo1, trace=FALSE, direction="backward", k=2)
@@ -231,13 +238,17 @@ daygen<-function(fi,ff){
   vecfec<-as.data.frame(seq(as.Date(fi),as.Date(ff),by="day"))
   names(vecfec)[1]<-"Fecha"
   vecfec$dia<-weekdays(vecfec$Fecha)
+  vecfec$dia<-as.character(vecfec$dia)
+  vecfec$dia[vecfec$dia=="miércoles"]<-"miercoles"
+  vecfec$dia[vecfec$dia=="sábado"]<-"sabado"
+  vecfec$dia<-as.factor(vecfec$dia)
   vecfec$mes<-month(vecfec$Fecha)
   vecfec$ano<-year(vecfec$Fecha)
   vecfec$dmes<-day(vecfec$Fecha)
   auxfun<-round(exp(predict.glm(mod_pois_glm,newdata=vecfec)))
   final<-as.data.frame(paste(day(vecfec$Fecha),month(vecfec$Fecha),year(vecfec$Fecha),sep="/"))
   final<-cbind2(final,weekdays(vecfec$Fecha))
-  final<-cbind2(final,auxfun)
+  final<-cbind2(final,as.integer(auxfun))
   
   names(final)[1]<-"Fecha"
   names(final)[2]<-"Día de la semana"
@@ -252,6 +263,10 @@ names(predic2018)[1]<-"Fecha"
 predic2018$Fecha<- as.Date(predic2018$Fecha, format = "%d/%m/%Y")
 predic2018$mes<-month(predic2018$Fecha)
 predic2018$dia<-weekdays(predic2018$Fecha)
+predic2018$dia<-as.character(predic2018$dia)
+predic2018$dia[predic2018$dia=="miércoles"]<-"miercoles"
+predic2018$dia[predic2018$dia=="sábado"]<-"sabado"
+predic2018$dia<-as.factor(predic2018$dia)
 predic2018$ano<-year(predic2018$Fecha)
 predic2018$dmes<-day(predic2018$Fecha)
 aux2018<-exp(predict.glm(mod_pois_glm,newdata=predic2018))

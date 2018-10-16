@@ -72,9 +72,9 @@ Como último ejemplo, tenemos al seector privado, especificamente a las compañ�
 </p><br>
 
 <p style = "font-size:20px" align="justify">
-Todo el proyecto fue desarrollado con el lenguaje de programación libre R.<br>
+Todo el proyecto fue desarrollado con el lenguaje de programación open-source R.<br>
 R Core Team (2018). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/. <br>
-Y se usaro los siguientes paquetes:
+Y se usaron los siguientes paquetes:
 <ul style = "font-size:17px">
   <li><b>dplyr</b><br>Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2018). dplyr: A Grammar of Data Manipulation. R package version 0.7.6.
   https://CRAN.R-project.org/package=dplyr
@@ -83,6 +83,9 @@ Y se usaro los siguientes paquetes:
   https://CRAN.R-project.org/package=Hmisc
   <li><b>lubridate</b><br>Garrett Grolemund, Hadley Wickham (2011). Dates and Times Made Easy with lubridate. Journal of Statistical Software, 40(3), 1-25. URL
   http://www.jstatsoft.org/v40/i03/.
+  <li><b>xlsx</b><br>Adrian A. Dragulescu and Cole Arendt (2018). xlsx: Read, Write, Format
+  Excel 2007 and Excel 97/2000/XP/2003 Files. R package version 0.6.1.
+  https://CRAN.R-project.org/package=xlsx.
 </ul>
 </p><hr>
 

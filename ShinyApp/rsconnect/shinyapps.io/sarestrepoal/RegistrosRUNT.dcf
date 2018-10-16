@@ -1,0 +1,12 @@
+name: RegistrosRUNT
+title: RegistrosRUNT
+username:
+account: sarestrepoal
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 517588
+bundleId: 1646617
+url: https://sarestrepoal.shinyapps.io/RegistrosRUNT/
+when: 1539728435.58498
+asMultiple: FALSE
+asStatic: FALSE
