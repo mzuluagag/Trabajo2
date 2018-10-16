@@ -1,4 +1,9 @@
 library(shiny)
+library(dplyr)
+library(MASS)
+library(Hmisc)
+library(xlsx)
+library(lubridate)
 library(shinythemes)
 load(file= "www/carritos",envir = .GlobalEnv,verbose = FALSE)
 shinyUI(fluidPage(

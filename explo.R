@@ -235,10 +235,13 @@ daygen<-function(fi,ff){
   vecfec$ano<-year(vecfec$Fecha)
   vecfec$dmes<-day(vecfec$Fecha)
   auxfun<-round(exp(predict.glm(mod_pois_glm,newdata=vecfec)))
-  final<-as.data.frame(vecfec$Fecha)
+  final<-as.data.frame(paste(day(vecfec$Fecha),month(vecfec$Fecha),year(vecfec$Fecha),sep="/"))
+  final<-cbind2(final,weekdays(vecfec$Fecha))
   final<-cbind2(final,auxfun)
+  
   names(final)[1]<-"Fecha"
-  names(final)[2]<-"Estimado"
+  names(final)[2]<-"Día de la semana"
+  names(final)[3]<-"Estimado"
   return(final)
 }
 

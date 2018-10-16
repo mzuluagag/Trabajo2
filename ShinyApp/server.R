@@ -1,10 +1,15 @@
 library(shiny)
+library(dplyr)
+library(MASS)
+library(Hmisc)
+library(xlsx)
+library(lubridate)
 
 
 shinyServer(function(input, output) {
-  output$tabla<-renderText(
+  output$tabla<-renderTable(
     if(input$apply2){
-      month(input$fecha_inicial)
+      daygen(input$fecha_inicial,input$fecha_final)
     }
   )
 })
