@@ -237,6 +237,7 @@ daygen<-function(fi,ff){
   auxfun<-round(exp(predict.glm(mod_pois_glm,newdata=vecfec)))
   final<-as.data.frame(vecfec$Fecha)
   final<-cbind2(final,auxfun)
+  names(final)[1]<-"Fecha"
   names(final)[2]<-"Estimado"
   return(final)
 }

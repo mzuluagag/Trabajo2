@@ -1,6 +1,6 @@
 library(shiny)
 library(shinythemes)
-
+load(file= "www/carritos",envir = .GlobalEnv,verbose = FALSE)
 shinyUI(fluidPage(
   theme = "style.css",
   absolutePanel(class = "wrapper", top = "25%", left = "25%", right = "25%", bottom = "25%", 
@@ -22,8 +22,8 @@ shinyUI(fluidPage(
                                           )
                                 )
                          ),
-                fluidRow(column(12, actionButton("apply2",label = "Generar predicción", class = "fadeIn fourth"))
-                  
+                fluidRow(column(12, actionButton("apply2",label = "Generar predicción", class = "fadeIn fourth")),
+                tableOutput("tabla")  
                 )
                 )
 ))

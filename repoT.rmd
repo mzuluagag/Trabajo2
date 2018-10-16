@@ -3,9 +3,9 @@ title:
 output: html_document
 ---
 <br><br><br>
-<h1 align="center"><b>Modelo predictor de carros registrados en el RUNT</b><hr><br><br></h1>
+<h1 align="center"><b>Modelo predictor de carros registrados en el RUNT.</b><hr><br><br></h1>
 
-<h2 align="center"><b>Asignatura</b></h2>
+<h2 align="center"><b>Asignatura:</b></h2>
 <h3 align="center">Técnicas de aprendizaje estadístico</h3>
 <h3 align="center">Universidad Nacional de Colombia</h3>
 <h3 align="center">Sede Medellín</h3>
@@ -18,29 +18,39 @@ output: html_document
 <h2 align="center"><b>Hecho por:</b></h2>
 <h3 align="center">Santiago Restrepo Álvarez</h3>
 <h3 align="center">Mateo Zuluaga Giraldo</h3>
-<h3 align="center">Sebastian Ramírez Tamayo</h3>
+<h3 align="center">Sebastián Ramírez Tamayo</h3>
 <h3 align="center">David Ossa Saldarriaga</h3>
 <h3 align="center">Daniel Restrepo Mejía<hr><br><br><br></h3>
 
 <h3><b>Introducción:</b></h3>
 <p style = "font-size:20px" align="justify">
-El siguiente trabajo, gira en torno a crear un modelo predictivo de los automóviles registrados en el RUNT, ¿cómo se logrará esto?, más adelante veremos cómo a partir de un archivo que contiene el número de automóviles registrados diariamente en el RUNT desde 2012 hasta 2017, se puede "entrenar" un modelo (un buen modelo) para predecir los automóviles que se registrarán en un futuro.
+El siguiente trabajo gira en torno a crear un modelo predictivo de los automóviles registrados en el RUNT. ¿Cómo se logrará esto?: Más adelante veremos cómo a partir de un archivo que contiene el número de automóviles registrados diariamente en el RUNT desde 2012 hasta 2017, se puede "entrenar" un modelo para predecir los automóviles que se registrarán en un futuro.
 </p><hr>
 
 
 <h3><b>Entendimiento inicial:</b></h3>
 <p style = "font-size:20px" align="justify">
-Todo automóvil que se quiera poner en circulación en el país, debe antes ser registrado en el Registro Único Nacional de Transito RUNT, con el fin de determinar la propiedad, características y situación jurídica de los vehículos automotores terrestres, este registro se lleva a cabo en los días hábiles y permite principalmente tener un registro completo de todos los automóbiles terrestres que circulas sobre el territorio nacional, permite conocer las fichas técnicas de homologación, emisiones de gases, entre otras.
+Todo automóvil que se quiera poner en circulación en el país, debe antes ser registrado en el Registro Único Nacional de Transito(RUNT), con el fin de determinar la propiedad, características y situación jurídica de los vehículos automotores terrestres, este registro se lleva a cabo en los días hábiles y permite principalmente tener un registro completo de todos los automóviles terrestres que circulan sobre el territorio nacional. El RUNT permite conocer las fichas técnicas de homologación, emisiones de gases, entre otros datos de interés.
 A continuación en el análisis técnico se verá detalladamente el procedimiento empleado para construir el modelo.
 </p><hr>
 
 <h3><b>Análisis técnico</b></h3>
 <p style = "font-size:20px" align="justify">
-Después de esta breve contextualización, se dará inicio a la explicación del cómo se construyó el proyecto; inicialmente se nos proporcionó un único archivo plano que contenía todos los registros de los automóviles registrados diariamente en el RUNT, el archivo contiene dos columnas, una de fecha y otra de número de autos registrádos, y tiene una fila por cada día comprendido entre el primero de Enero de 2012 y el treinta y uno de Diciembre de 2017, el principal requisito del modelo, es que sea entrenado con los datos de 2012 hasta 2016 y usar los datos de 2017 como validación y posteriormente predecir todo el primer semestre del 2018, cabe aclarar que no tenemos los datos reales del 2018, estos solo los tiene el profesor.
-Como solo se tiene una variable, es necesario buscar por cuenta propia otras variables, de las que podamos descargar sus registros en este lapso de tiempo y que estas variables mejoren la predicción del modelo no existe ningún criterio objetivo para seleccionar estas nuevas variables más que el criterio grupal; las variables que inicialmente elegimos como candidatas para estar en el modelo son las siguientes:
+Después de esta breve contextualización, se dará inicio a la explicación del cómo se construyó el proyecto; inicialmente se nos proporcionó un único archivo plano que contenía todos los registros de los automóviles registrados diariamente en el RUNT, el archivo contiene dos columnas, una de fecha y otra de número de autos registrados, y tiene una fila por cada día comprendido entre el primero(1) de Enero de 2012 y el treinta y uno(31) de Diciembre de 2017, el principal requisito del modelo es que sea entrenado con los datos de 2012 hasta 2016 y usar los datos de 2017 como validación y posteriormente predecir todo el primer semestre del 2018, cabe aclarar que no tenemos los datos reales del 2018, estos sólo los tiene el profesor.
+Como sólo se tiene una variable, es necesario buscar por cuenta propia otras variables de las que podamos descargar sus registros en este lapso de tiempo y que estas variables mejoren la predicción del modelo; se partió de variables relacionadas con el crecimiento de la economía nacional cómo punto de partida. Las variables que inicialmente elegimos como candidatas para estar en el modelo cómo variables independientes son las siguientes:
 </p><hr>
 <ul style = "font-size:20px">
-  <li>***Incluir acá lista***
+  <li>Mes
+  <li>Día del mes
+  <li>Día de la semana
+  <li>Año
+  <li>Tasa de empleo
+  <li>Tasa de desempleo
+  <li>Índice de precio al consumidor
+  <li>Precio promedio de el barril de petróleo BRENT
+  <li>Salario mínimo
+  <li>DTF
+  <li>Índice de confianza del consumidor
 </ul>
 
 <p style = "font-size:20px" align="justify">
@@ -52,7 +62,7 @@ Como solo se tiene una variable, es necesario buscar por cuenta propia otras var
 Después de todo este esfuerzo para construir este modelo que acabamos de ver, surgirá la pregunta ¿para qué todo esto? pues bueno, el proyecto podría no tener un enfoque único, ya que este modelo podría ser de mucha utilidad para el estado, o empresas privadas, a continuación veremos tres ejemplos prácticos.<br>
 En primer lugar y el ejemplo más trivial estaría en la contratación del personal, ya que en número de registros de vehículos en un día, se traduce en personas haciendo fila, así que este modelo serviría para hacer una contratación dinámica, es decir que se contrate más personal, en los meses del año en los que más autos se registran para agilizar la atención y así mismo contratar menos personal en los meses con menos registros, para así ahorar recursos.<br>
 Como segundo ejemplo, está la infraestructura vial y políticas de movilidad, ya que el modelo le serviría al estado para predecir el crecimiento del parque automotor, para implementar políticas de movilidad o construir infraestructura.<br>
-Como último ejemplo, tenemos al sector privado, especificamente a las compañías que fabrican y venden autos, ya que estas, sabiendo la porción de mercado que tienen frente a la competencia, antes de inundar el mercado con más autos de los que van a vender, podrían predecir estas cifras, para no incurrir en perdidas por tenes demasiadas existencias de vehículos en venta, también les puede servir antes de implementar políticas de expansión.
+Como último ejemplo, tenemos al seector privado, especificamente a las compañías que fabrican y venden autos, ya que estas, sabiendo la porción de mercado que tienen frente a la competencia, antes de inundar el mercado con más autos de los que van a vender, podrían predecir estas cifras, para no incurrir en perdidas por tenes demasiadas existencias de vehículos en venta, también les puede servir antes de implementar políticas de expansión.
 </p><hr>
 
 <h3><b>Referencias:</b></h3>
