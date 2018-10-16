@@ -203,11 +203,12 @@ attach(db2016)
 modelo1<-lm(Unidades~mes+dia+pop+templeo+tdesem+IPC+varanualipc+Promgaso+salmini+detf+iconf)
 modelosel<-stepAIC(object=modelo1, trace=FALSE, direction="backward", k=2)
 #
-#mod_pois_glm<-glm(Unidades~mes+dia+templeo+tdesem+IPC+Promgaso+salmini+detf+iconf,poisson)
+modposin<-glm(Unidades~mes+dia+templeo+tdesem+IPC+Promgaso+salmini+detf+iconf+dmes,poisson)
 #modelosel<-stepAIC(object=mod_pois_glm, trace=FALSE, direction="backward", k=2)
 
 mod_pois_glm<-glm(Unidades~mes+dia+ano+dmes,poisson)
 1-(mod_pois_glm$deviance/mod_pois_glm$null.deviance)
+1-(modposin$deviance/modposin$null.deviance)
 # 1-(modelosel$deviance/modelosel$null.deviance)
 # prueba<-db2017[6,]
 # round(exp(predict.glm(mod_pois_glm,newdata=prueba)))
@@ -233,9 +234,14 @@ daygen<-function(fi,ff){
   vecfec$mes<-month(vecfec$Fecha)
   vecfec$ano<-year(vecfec$Fecha)
   vecfec$dmes<-day(vecfec$Fecha)
-  return(vecfec)
-  
+  auxfun<-round(exp(predict.glm(mod_pois_glm,newdata=vecfec)))
+  final<-as.data.frame(vecfec$Fecha)
+  final<-cbind2(final,auxfun)
+  names(final)[2]<-"Estimado"
+  return(final)
 }
+
+
 
 predic2018<-read.csv2("fecha.csv",header=F)
 names(predic2018)[1]<-"Fecha"
