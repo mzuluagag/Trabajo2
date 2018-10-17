@@ -22,5 +22,22 @@ shinyServer(function(input, output) {
         
       ))
     })
+  
+  
+  observeEvent(input$apply3, {
+    showModal(modalDialog(
+      title = "Resumen descriptivo de la aplicación",
+      footer = modalButton("Cerrar"),
+      easyClose = TRUE,
+      fluidRow(column(10, align = "center", offset = 1,
+                      output$grafico<-renderPlot(
+                        if(input$apply2){
+                          daydescri(input$fecha_inicial,input$fecha_final)
+                        }
+                      )
+      ))
+      
+    ))
+  })
 })
 

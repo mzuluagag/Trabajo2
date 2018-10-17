@@ -7,9 +7,9 @@ library(shinythemes)
 load(file= "www/carritos",envir = .GlobalEnv,verbose = FALSE)
 shinyUI(fluidPage(
   theme = "style.css",
-  absolutePanel(class = "wrapper", top = "25%", left = "25%", right = "25%", bottom = "25%", 
+  absolutePanel(class = "wrapper", 
                 fluidRow(column(10, align = "center", offset = 1,  
-                                h2("Seleccione la fecha inicial y la fecha final")
+                                h2("Predictor de registros de autos en el RUNT")
                                 )),
                 fluidRow(column(6, 
                                 align = "center",
@@ -26,7 +26,14 @@ shinyUI(fluidPage(
                                           )
                                 )
                          ),
-                fluidRow(column(12, actionButton("apply2",label = "Generar predicción", class = "fadeIn fourth"))
-                )
+                fluidRow(column(12, actionButton("apply2",
+                                                label = "Generar predicción", 
+                                                class = "fadeIn fourth"
+                                                )
+                                )
+                         ),
+                fluidRow(column(12, actionButton("apply3",
+                                                       label = "Resumen descriptivo",
+                                                       class = "fadeIn descriptive")))
                 )
 ))
