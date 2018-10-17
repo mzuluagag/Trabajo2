@@ -26,7 +26,7 @@ shinyServer(function(input, output) {
   
   observeEvent(input$apply3, {
     showModal(modalDialog(
-      title = "Resumen descriptivo de la aplicación",
+      title = "Resumen descriptivo de la predicción",
       footer = modalButton("Cerrar"),
       easyClose = TRUE,
       fluidRow(column(10, align = "center", offset = 1,

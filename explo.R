@@ -281,7 +281,7 @@ daydescri<-function(fi,ff){
   semana<-semana[order(semana$dia), ]
   par(mfrow=c(1,2))
   #Análisis por día de la semana
-  yy=barplot(semana$Estimado, xlab="Día de la semana", ylab="Registros",main="Resumen: Registros por día", col="cornflowerblue")
+  yy=barplot(semana$Estimado, ylab="Registros",main="Resumen: Registros por día", col="cornflowerblue")
   axis(1, at=yy,labels=semana$dia, tick=FALSE, las=2, line=-0.5)
   
   #Analizar los datos por mes
@@ -295,7 +295,7 @@ daydescri<-function(fi,ff){
     mes$mes[mes$mes==num[i]]<-rem[i]
   }
   #Análisis de meses y compras
-  xx=barplot(mes$Estimado,col="orangered",ylab="Registros",xlab="Mes",main="Resumen: Registros por mes")
+  xx=barplot(mes$Estimado,col="orangered",ylab="Registros",main="Registros por mes")
   axis(1, at=xx,labels=mes$mes, tick=FALSE, las=2, line=-0.5, cex.axis=0.9)
   # 
 }
