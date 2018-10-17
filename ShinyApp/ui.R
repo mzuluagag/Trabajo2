@@ -2,7 +2,6 @@ library(shiny)
 library(dplyr)
 library(MASS)
 library(Hmisc)
-library(xlsx)
 library(lubridate)
 library(shinythemes)
 load(file= "www/carritos",envir = .GlobalEnv,verbose = FALSE)
@@ -27,8 +26,7 @@ shinyUI(fluidPage(
                                           )
                                 )
                          ),
-                fluidRow(column(12, actionButton("apply2",label = "Generar predicción", class = "fadeIn fourth")),
-                tableOutput("tabla")  
+                fluidRow(column(12, actionButton("apply2",label = "Generar predicción", class = "fadeIn fourth"))
                 )
                 )
 ))
