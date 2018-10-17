@@ -2,6 +2,9 @@
 title:
 output: html_document
 ---
+
+
+
 <br><br><br>
 <h1 align="center"><b>Modelo predictor de carros registrados en el RUNT.</b><hr><br><br></h1>
 
@@ -40,29 +43,137 @@ Después de esta breve contextualización, se dará inicio a la explicación del
 Como sólo se tiene una variable, es necesario buscar por cuenta propia otras variables de las que podamos descargar sus registros en este lapso de tiempo y que estas variables mejoren la predicción del modelo; se partió de variables relacionadas con el crecimiento de la economía nacional cómo punto de partida. Las variables que inicialmente elegimos como candidatas para estar en el modelo cómo variables independientes son las siguientes:
 </p><hr>
 <ul style = "font-size:20px">
-  <li>Mes
-  <li>Día del mes
-  <li>Día de la semana
-  <li>Año
-  <li>Tasa de empleo
-  <li>Tasa de desempleo
-  <li>Índice de precio al consumidor
-  <li>Precio promedio de el barril de petróleo BRENT
-  <li>Salario mínimo
-  <li>DTF
-  <li>Índice de confianza del consumidor
-</ul>
+  <li><b>Mes:</b>
+  
+```{r,echo=FALSE}
+load("ShinyApp/www/carritos")
+xx=barplot(mescompra$Unidades,col="dodgerblue",main="Registros por mes 2012-2016",xlab="Mes",ylab="Registros")
+axis(1, at=xx,labels=c("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"), tick=FALSE, las=2, line=-0.5, cex.axis=0.9)
 
-<p style = "font-size:20px" align="justify">
-***Acá va la explicación de cada variable***
-</p><hr>
+    
+```
+
+Se quiso tomar el mes, ya que al hacer el análisis descriptivo a partir de los registros por  mes, se pudo ver que había una tendencia a crecer a medida que el año se iba acabando, por esto y porque además es una variable relativamente fácil de calcular, se tomó la decisión de incluirla.
+
+  <li>Día del mes.
+  A partir de el entendimiento inicial, se llegó a la suposición de que las personas en las épocas de quincena podrían estar más animadas a comprar un vehículo, también se tuvo en cuenta por facilidad a la hora de obtenerse.
+  <li>Día de la semana.
+```{r,echo=FALSE}
+yy=barplot(semanacompra$Unidades,col="firebrick1",main="Registros por día semanal",ylab="Registros")
+axis(1, at=yy,labels=semanacompra$dia, tick=FALSE, las=2, line=-0.5)
+
+```
+  
+  En el gráfico se puede apreciar que hay más registros a medida que la semana va avanzando y que los fines de semana se reducen mucho los registros, además de que los registros los Domingos son casi nulos (se debe tener en cuenta que en los días festivos no hay registros pero no hay manera de saber qué días son festivos).
+  <li>Año
+  <br>
+  <img src="D:/Documents/GitHub/Trabajo2/anos.jpeg">
+  
+  En el gráfico anterior se logra ver que a medida que los años pasan, la tendencia a registrar carros disminuye, por eso se decidió incluir la variable en el modelo.
+  
+  <b>Se buscaron variables relacionadas con la economía:</b>
+  <br>
+  <li>Popularidad de la palabra "carro" según Google Trends.
+  <li>Tasa representativa del mercado(dólar).
+  
+  <li><a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/empleo-y-desempleo%22%3E"> Tasa de empleo</a>
+  
+  <li><a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/empleo-y-desempleo%22%3E"> Tasa de desempleo</a>
+  
+  <li><a href = "http://www.banrep.gov.co/es/indice-precios-consumidor-ipc%22%3E"> Índice de precio al consumidor</a>
+  
+  <li><a href = "https://es.wikipedia.org/wiki/Petr%C3%B3leo_Brent%22%3E"> Precio promedio de el barril de petróleo BRENT</a>
+  <li><a href = "http://www.salariominimocolombia.net/historico/%22%3E"> Salario mínimo</a>
+  
+  <li><a href =  "https://www.eltiempo.com/archivo/documento/MAM-541703%22%3E"> DTF</a>
+  
+  <li><a href = "https://www.fedesarrollo.org.co/encuestas/consumidor-eoc%22%3E"> Índice de confianza del consumidor</a>
+  
+```{r,echo=FALSE}
+par(mfrow=c(2,2))
+attach(dbmeses)
+plot(mes,TRM,type="l",main="TRM")
+plot(mes,uni,type="l",main="Unidades",col="red",lwd=2)
+plot(mes,pop,type="l",main="Popularidad")
+plot(mes,templeo,type="l",main="Tasa de empleo")
+```
+
+```{r,echo=FALSE}
+par(mfrow=c(2,2))
+plot(mes,tdesem,type="l",main="Tasa de desempleo")
+plot(mes,IPC,type="l",main="IPC")
+plot(mes,varanualipc,type="l",main="Variación anual IPC")
+plot(mes,PromGaso,type="l",main="Costo promedio en dólares barril de petróleo NY")
+```
+
+Al elaborar diagramas de líneas se logra ver la tendencia anteriormente mencionada de que en Diciembre hay más registros, al haber más registros se refiere a que hay más compras de carros, por lo tanto: La economía va a tener un movimiento mayor. Se logra ver que las variables tales cómo: La popularidad, tasa de empleo, tasa de desempleo y los carros registrados posee picos muy pronunciados a final de cada año. Se logra notar también que a medida que la tasa representativa del mercado ha subido, la cantidad de carros registrados bajó; igualmente el barril de petróleo. La variación anual de el ipc a dado a notar que la inflación ha crecido, eso también daría una explicación a la reducción de los registros de los carros.
+  
+
+
+<b>Creación y selección de el modelo de predicción.</b>
+
+Inicialmente se intentó hacer una regresión lineal clásica con las variables anteriormente mencionadas(exceptuando año y día del mes), la cuál dio cómo resultado el siguiente modelo:
+
+```{r,echo=FALSE}
+summary(modelo1)
+
+```
+
+Se obtuvo un $R^2$ de 66% aproximadamente, al aplicar selección de variable hacia atrás se obtuvo este otro modelo:
+
+```{r,echo=FALSE}
+summary(modelosel)
+```
+
+Cómo se puede ver, el $R^2$ es casi el mismo y se redujo el modelo a sólo unas pocas variables, las cuales son: Día de la semana, mes, popularidad, IPC, tasa de empleo y salario mínimo.
+
+A partir de esto se decide probar con otro modelo, se procede a hacer uso de la regresión Poisson a partir de la función "glm" de R con todas las variables:
+
+```{r,echo=FALSE}
+summary(modposin)
+1-(modposin$deviance/modposin$null.deviance)
+```
+
+Se obtiene un $R^2$ de el 74%, el cuál es mucho mejor respecto a los modelos lineales clásicos usados anteriormente.
+
+Ahora hay otro problema para abarcar: ¿Son las variables a usar realmente proyectables? ¿Qué tan confiables son estas proyecciones, si es que existen? 
+
+Para dar solución a esta problemática, se separan las variables en dos grupos: Variables sin necesidad de proyeccion (día del mes, año, mes, día de la semana) y las variables a proyectar(TRM,IPC,tasa de empleo, tasa de desempleo, índice de confianza al consumidor, precio de el barril de petróleo, salario mínimo, popularidad y variación anual del IPC). 
+
+Se decide entonces a probar con un modelo de regresión Poisson solamente con las variables sin necesidad de proyección:
+```{r}
+summary(mod_pois_glm)
+1-(mod_pois_glm$deviance/mod_pois_glm$null.deviance)
+```
+
+Cómo se puede ver, nuestro $R^2$ se conservó de una manera impresionante, dando a entender que las variables que más influyen en nuestro modelo son las que carecen de la necesidad de proyección, tener un modelo así posee muchas ventajas, una de ellas es que se puede proyectar con mayor facilidad y sin restricciones a futuro -eso si- se debe tener en cuenta que el entrenamiento de los datos sólo tuvo en cuenta lo comprendido entre 2012 y 2016 y que esas tendencias pueden desaparecer a medida que el tiempo pase.
+
+<b>Validación de los datos</b>
+
+Se procede entonces a obtener la validación de el modelo a partir de los datos de 2017.
+
+Los datos poseen el siguiente aspecto:
+```{r,echo=FALSE}
+head(estim)
+```
+
+A partir de las tantas fórmulas para calcular explicatividad de variables, se procede a usar la siguiente para el cálculo de el $R^2$.$$R^2=1-\frac{\sum_{i=1}^{n} (Y_i-\hat{Y_i})^2}{\sum_{i=1}^{n}(Y_i-\bar{Y})^2}$$
+
+
+```{r,echo=FALSE}
+1-(sum((db2017$Unidades-estim$fit)^2)/sum((db2017$Unidades-mean(db2017$Unidades))^2))
+```
+
+Se obtiene un $R^2$ de validación de aproximadamente el 63% para los datos de el año 2017.
+
+
 
 <h3><b>Enfoque</b></h3>
 <p style = "font-size:20px" align="justify">
-Después de todo este esfuerzo para construir este modelo que acabamos de ver, surgirá la pregunta ¿para qué todo esto? pues bueno, el proyecto podría no tener un enfoque único, ya que este modelo podría ser de mucha utilidad para el estado, o empresas privadas, a continuación veremos tres ejemplos prácticos.<br>
-En primer lugar y el ejemplo más trivial estaría en la contratación del personal, ya que en número de registros de vehículos en un día, se traduce en personas haciendo fila, así que este modelo serviría para hacer una contratación dinámica, es decir que se contrate más personal, en los meses del año en los que más autos se registran para agilizar la atención y así mismo contratar menos personal en los meses con menos registros, para así ahorar recursos.<br>
+Después de todo este esfuerzo para construir este modelo que acabamos de ver, surgirá la pregunta: ¿Para qué todo esto? Pues bueno, el proyecto podría no tener un enfoque único, ya que este modelo podría ser de mucha utilidad para el estado o empresas privadas, a continuación veremos tres ejemplos prácticos.<br>
+En primer lugar y el ejemplo más trivial estaría en la contratación de personal, ya que el número de registros de vehículos en un día, se traduce en personas haciendo fila, así que este modelo serviría para hacer una contratación dinámica, es decir: Que se contrate más personal en los meses del año en los que más autos se registran para agilizar la atención y así mismo contratar menos personal en los meses con menos registros, para así ahorrar recursos.<br>
 Como segundo ejemplo, está la infraestructura vial y políticas de movilidad, ya que el modelo le serviría al estado para predecir el crecimiento del parque automotor, para implementar políticas de movilidad o construir infraestructura.<br>
-Como último ejemplo, tenemos al seector privado, especificamente a las compañías que fabrican y venden autos, ya que estas, sabiendo la porción de mercado que tienen frente a la competencia, antes de inundar el mercado con más autos de los que van a vender, podrían predecir estas cifras, para no incurrir en perdidas por tenes demasiadas existencias de vehículos en venta, también les puede servir antes de implementar políticas de expansión.
+Como último ejemplo, tenemos al sector privado, especificamente a las compañías que fabrican y venden autos, ya que estas sabiendo la porción de mercado que tienen frente a la competencia, antes de inundar el mercado con más autos de los que van a vender, podrían predecir estas cifras, para no incurrir en perdidas por tener demasiadas existencias de vehículos en venta. También puede servir a la hora de implementar políticas de expansión.
 </p><hr>
 
 <h3><b>Referencias:</b></h3>

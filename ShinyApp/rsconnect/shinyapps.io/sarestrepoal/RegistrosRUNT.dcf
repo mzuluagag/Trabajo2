@@ -5,8 +5,8 @@ account: sarestrepoal
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 517588
-bundleId: 1646791
+bundleId: 1646852
 url: https://sarestrepoal.shinyapps.io/RegistrosRUNT/
-when: 1539739673.63176
+when: 1539743047.12872
 asMultiple: FALSE
 asStatic: FALSE
