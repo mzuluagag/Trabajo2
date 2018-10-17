@@ -14,14 +14,14 @@ shinyUI(fluidPage(
                 fluidRow(column(6, 
                                 align = "center",
                                 dateInput("fecha_inicial", 
-                                          label = h3("Seleccione la fecha inicial"), 
+                                          label = h3("Seleccione fecha inicial"), 
                                           value = ""
                                           )
                                 ),
                          column(6, 
                                 align = "center",
                                 dateInput("fecha_final", 
-                                          label = h3("Seleccione la fecha final"), 
+                                          label = h3("Seleccione fecha final"), 
                                           value = ""
                                           )
                                 )
