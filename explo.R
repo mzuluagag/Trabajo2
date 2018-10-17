@@ -256,7 +256,49 @@ daygen<-function(fi,ff){
   return(final)
 }
 
-
+daydescri<-function(fi,ff){
+  vecfec<-as.data.frame(seq(as.Date(fi),as.Date(ff),by="day"))
+  names(vecfec)[1]<-"Fecha"
+  vecfec$dia<-weekdays(vecfec$Fecha)
+  vecfec$dia<-as.character(vecfec$dia)
+  vecfec$dia[vecfec$dia=="miércoles"]<-"miercoles"
+  vecfec$dia[vecfec$dia=="sábado"]<-"sabado"
+  vecfec$dia<-as.factor(vecfec$dia)
+  vecfec$mes<-month(vecfec$Fecha)
+  vecfec$ano<-year(vecfec$Fecha)
+  vecfec$dmes<-day(vecfec$Fecha)
+  auxfun<-round(exp(predict.glm(mod_pois_glm,newdata=vecfec)))
+  final<-as.data.frame(paste(day(vecfec$Fecha),month(vecfec$Fecha),year(vecfec$Fecha),sep="/"))
+  final<-cbind2(final,weekdays(vecfec$Fecha))
+  final<-cbind2(final,as.integer(auxfun))
+  final<-cbind2(final,month(vecfec$Fecha))
+  names(final)[1]<-"Fecha"
+  names(final)[2]<-"dia"
+  names(final)[3]<-"Estimado"
+  names(final)[4]<-"mes"
+  semana<-final%>%group_by(dia)%>%summarise(Estimado=sum(Estimado))
+  semana$dia <- factor(semana$dia, levels= c(weekdays(seq(as.Date(fi),as.Date(fi)+6,by="day"))))
+  semana<-semana[order(semana$dia), ]
+  par(mfrow=c(1,2))
+  #Análisis por día de la semana
+  yy=barplot(semana$Estimado, xlab="Día de la semana", ylab="Registros",main="Resumen: Registros por día", col="cornflowerblue")
+  axis(1, at=yy,labels=semana$dia, tick=FALSE, las=2, line=-0.5)
+  
+  #Analizar los datos por mes
+  mes<-final%>%group_by(mes)%>%summarise(Estimado=sum(Estimado))
+  mes$mes<- factor(mes$mes, levels= c(month((seq(as.Date(fi),as.Date(fi)+364,by="month")))))
+  mes<-mes[order(mes$mes), ]
+  num<-seq(1,12,by=1)
+  rem<-c("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre")
+  mes$mes<-as.character(mes$mes)
+  for(i in 1:12){
+    mes$mes[mes$mes==num[i]]<-rem[i]
+  }
+  #Análisis de meses y compras
+  xx=barplot(mes$Estimado,col="orangered",ylab="Registros",xlab="Mes",main="Resumen: Registros por mes")
+  axis(1, at=xx,labels=mes$mes, tick=FALSE, las=2, line=-0.5, cex.axis=0.9)
+  # 
+}
 
 predic2018<-read.csv2("fecha.csv",header=F)
 names(predic2018)[1]<-"Fecha"
@@ -290,7 +332,7 @@ plot(mes,varanualipc,type="l",ylab="Costo promedio en dólares barril de petról
 
 #Analizar los datos por día de la semana
 semanacompra<-db%>%group_by(dia)%>%summarise(Unidades=sum(Unidades))
-semanacompra$dia <- factor(semanacompra$dia, levels= c("lunes", "martes","miércoles", "jueves", "viernes", "sábado", "domingo"))
+semanacompra$dia <- factor(semanacompra$dia, levels= c("lunes", "martes","miercoles", "jueves", "viernes", "sabado", "domingo"))
 semanacompra<-semanacompra[order(semanacompra$dia), ]
 
 #Análisis por día de la semana
