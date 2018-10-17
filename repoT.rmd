@@ -55,9 +55,11 @@ axis(1, at=xx,labels=c("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio",
 
 Se quiso tomar el mes, ya que al hacer el análisis descriptivo a partir de los registros por  mes, se pudo ver que había una tendencia a crecer a medida que el año se iba acabando, por esto y porque además es una variable relativamente fácil de calcular, se tomó la decisión de incluirla.
 
-  <li>Día del mes.
+  <li><b>Día del mes:</b>
   A partir de el entendimiento inicial, se llegó a la suposición de que las personas en las épocas de quincena podrían estar más animadas a comprar un vehículo, también se tuvo en cuenta por facilidad a la hora de obtenerse.
-  <li>Día de la semana.
+  
+  <li><b>Día de la semana:</b>
+  
 ```{r,echo=FALSE}
 yy=barplot(semanacompra$Unidades,col="firebrick1",main="Registros por día semanal",ylab="Registros")
 axis(1, at=yy,labels=semanacompra$dia, tick=FALSE, las=2, line=-0.5)
@@ -65,29 +67,31 @@ axis(1, at=yy,labels=semanacompra$dia, tick=FALSE, las=2, line=-0.5)
 ```
   
   En el gráfico se puede apreciar que hay más registros a medida que la semana va avanzando y que los fines de semana se reducen mucho los registros, además de que los registros los Domingos son casi nulos (se debe tener en cuenta que en los días festivos no hay registros pero no hay manera de saber qué días son festivos).
-  <li>Año
+  <br>
+  <li><b>Año:</b>
   <br>
   <img src="D:/Documents/GitHub/Trabajo2/anos.jpeg">
   
   En el gráfico anterior se logra ver que a medida que los años pasan, la tendencia a registrar carros disminuye, por eso se decidió incluir la variable en el modelo.
   
-  <b>Se buscaron variables relacionadas con la economía:</b>
+<h3><b>Ahora las variables relacionadas con la economía:</b></h3>
+
   <br>
-  <li>Popularidad de la palabra "carro" según Google Trends.
-  <li>Tasa representativa del mercado(dólar).
+  <li><b>Popularidad en Colombia de la palabra "carro" según Google Trends.</b>
+  <li><b>Tasa representativa del mercado(dólar).</b>
   
-  <li><a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/empleo-y-desempleo%22%3E"> Tasa de empleo</a>
+  <li><b><a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/empleo-y-desempleo%22%3E"> Tasa de empleo</a></b>
   
-  <li><a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/empleo-y-desempleo%22%3E"> Tasa de desempleo</a>
+  <li><b><a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/empleo-y-desempleo%22%3E"> Tasa de desempleo</a></b>
   
-  <li><a href = "http://www.banrep.gov.co/es/indice-precios-consumidor-ipc%22%3E"> Índice de precio al consumidor</a>
+  <li><b><a href = "http://www.banrep.gov.co/es/indice-precios-consumidor-ipc%22%3E"> Índice de precio al consumidor</a></b>
   
-  <li><a href = "https://es.wikipedia.org/wiki/Petr%C3%B3leo_Brent%22%3E"> Precio promedio de el barril de petróleo BRENT</a>
-  <li><a href = "http://www.salariominimocolombia.net/historico/%22%3E"> Salario mínimo</a>
+  <li><b><a href = "https://es.wikipedia.org/wiki/Petr%C3%B3leo_Brent%22%3E"> Precio promedio de el barril de petróleo BRENT</a></b>
+  <li><b><a href = "http://www.salariominimocolombia.net/historico/%22%3E"> Salario mínimo</a></b>
   
-  <li><a href =  "https://www.eltiempo.com/archivo/documento/MAM-541703%22%3E"> DTF</a>
+  <li><b><a href =  "https://www.eltiempo.com/archivo/documento/MAM-541703%22%3E"> DTF</a></b>
   
-  <li><a href = "https://www.fedesarrollo.org.co/encuestas/consumidor-eoc%22%3E"> Índice de confianza del consumidor</a>
+  <li><b><a href = "https://www.fedesarrollo.org.co/encuestas/consumidor-eoc%22%3E"> Índice de confianza del consumidor</a></b>
   
 ```{r,echo=FALSE}
 par(mfrow=c(2,2))
@@ -119,7 +123,9 @@ summary(modelo1)
 
 ```
 
-Se obtuvo un $R^2$ de 66% aproximadamente, al aplicar selección de variable hacia atrás se obtuvo este otro modelo:
+Se obtuvo un $R^2$ de 66% aproximadamente para este modelo.
+
+Al aplicar selección de variable hacia atrás, se obtuvo el siguiente modelo:
 
 ```{r,echo=FALSE}
 summary(modelosel)
@@ -127,7 +133,7 @@ summary(modelosel)
 
 Cómo se puede ver, el $R^2$ es casi el mismo y se redujo el modelo a sólo unas pocas variables, las cuales son: Día de la semana, mes, popularidad, IPC, tasa de empleo y salario mínimo.
 
-A partir de esto se decide probar con otro modelo, se procede a hacer uso de la regresión Poisson a partir de la función "glm" de R con todas las variables:
+A partir de esto se decide probar con otro modelo, se procede a hacer uso de un modelo lineal generalizado(Poisson) a partir de la función "glm" de R con todas las variables:
 
 ```{r,echo=FALSE}
 summary(modposin)
@@ -136,17 +142,17 @@ summary(modposin)
 
 Se obtiene un $R^2$ de el 74%, el cuál es mucho mejor respecto a los modelos lineales clásicos usados anteriormente.
 
-Ahora hay otro problema para abarcar: ¿Son las variables a usar realmente proyectables? ¿Qué tan confiables son estas proyecciones, si es que existen? 
+Ahora hay otro problema para abarcar: ¿Son las variables a usar realmente proyectables? ¿Qué tan confiables son -si es que existen- estas proyecciones? 
 
 Para dar solución a esta problemática, se separan las variables en dos grupos: Variables sin necesidad de proyeccion (día del mes, año, mes, día de la semana) y las variables a proyectar(TRM,IPC,tasa de empleo, tasa de desempleo, índice de confianza al consumidor, precio de el barril de petróleo, salario mínimo, popularidad y variación anual del IPC). 
 
-Se decide entonces a probar con un modelo de regresión Poisson solamente con las variables sin necesidad de proyección:
+Se decide entonces a probar con un modelo de regresión lineal generalizado Poisson solamente con las variables sin necesidad de proyección:
 ```{r}
 summary(mod_pois_glm)
 1-(mod_pois_glm$deviance/mod_pois_glm$null.deviance)
 ```
 
-Cómo se puede ver, nuestro $R^2$ se conservó de una manera impresionante, dando a entender que las variables que más influyen en nuestro modelo son las que carecen de la necesidad de proyección, tener un modelo así posee muchas ventajas, una de ellas es que se puede proyectar con mayor facilidad y sin restricciones a futuro -eso si- se debe tener en cuenta que el entrenamiento de los datos sólo tuvo en cuenta lo comprendido entre 2012 y 2016 y que esas tendencias pueden desaparecer a medida que el tiempo pase.
+Cómo se puede ver, nuestro $R^2$ se conservó de una manera impresionante, dando a entender que las variables que más influyen en nuestro modelo son las que carecen de la necesidad de proyección, tener un modelo así posee muchas ventajas, una de ellas es que se puede proyectar con mayor facilidad y sin restricciones a futuro -eso si- se debe tener en cuenta que el entrenamiento de el modelo sólo tuvo en cuenta lo comprendido entre 2012 y 2016 y que esas tendencias pueden desaparecer a medida que el tiempo pase.
 
 <b>Validación de los datos</b>
 
