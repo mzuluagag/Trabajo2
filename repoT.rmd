@@ -39,7 +39,7 @@ A continuación en el análisis técnico se verá detalladamente el procedimient
 
 <h3><b>Análisis técnico</b></h3>
 <p style = "font-size:20px" align="justify">
-Después de esta breve contextualización, se dará inicio a la explicación del cómo se construyó el proyecto; inicialmente se nos proporcionó un único archivo plano que contenía todos los registros de los automóviles registrados diariamente en el RUNT, el archivo contiene dos columnas, una de fecha y otra de número de autos registrados, y tiene una fila por cada día comprendido entre el primero(1) de Enero de 2012 y el treinta y uno(31) de Diciembre de 2017, el principal requisito del modelo es que sea entrenado con los datos de 2012 hasta 2016 y usar los datos de 2017 como validación y posteriormente predecir todo el primer semestre del 2018, cabe aclarar que no tenemos los datos reales del 2018, estos sólo los tiene el profesor.
+Después de esta breve contextualización, se dará inicio a la explicación del cómo se construyó el proyecto; inicialmente se nos proporcionó un único archivo plano que contenía todos los registros de los automóviles registrados diariamente en el RUNT, el archivo contiene dos columnas, una de fecha y otra de número de autos registrados, y tiene una fila por cada día comprendido entre el primero (1) de Enero de 2012 y el treinta y uno (31) de Diciembre de 2017, el principal requisito del modelo es que sea entrenado con los datos de 2012 hasta 2016 y usar los datos de 2017 como validación y posteriormente predecir todo el primer semestre del 2018, cabe aclarar que no tenemos los datos reales del 2018, estos sólo los tiene el profesor.
 Como sólo se tiene una variable, es necesario buscar por cuenta propia otras variables de las que podamos descargar sus registros en este lapso de tiempo y que estas variables mejoren la predicción del modelo; se partió de variables relacionadas con el crecimiento de la economía nacional cómo punto de partida. Las variables que inicialmente elegimos como candidatas para estar en el modelo cómo variables independientes son las siguientes:
 </p><hr>
 <ul style = "font-size:20px">
@@ -110,11 +110,32 @@ plot(mes,varanualipc,type="l",main="Variación anual IPC")
 plot(mes,PromGaso,type="l",main="Costo promedio en dólares barril de petróleo NY")
 ```
 
-Al elaborar diagramas de líneas se logra ver la tendencia anteriormente mencionada de que en Diciembre hay más registros, al haber más registros se refiere a que hay más compras de carros, por lo tanto: La economía va a tener un movimiento mayor. Se logra ver que las variables tales cómo: La popularidad, tasa de empleo, tasa de desempleo y los carros registrados posee picos muy pronunciados a final de cada año. Se logra notar también que a medida que la tasa representativa del mercado ha subido, la cantidad de carros registrados bajó; igualmente el barril de petróleo. La variación anual de el ipc a dado a notar que la inflación ha crecido, eso también daría una explicación a la reducción de los registros de los carros.
+Al elaborar diagramas de líneas se logra ver la tendencia anteriormente mencionada de que en Diciembre hay más registros, al haber más registros se refiere a que hay más compras de carros, por lo tanto: La economía va a tener un movimiento mayor. Se logra ver que las variables tales cómo: La popularidad, tasa de empleo, tasa de desempleo y los carros registrados poseen picos muy pronunciados a final de cada año. Se logra notar también que a medida que la tasa representativa del mercado ha subido, la cantidad de carros registrados baja; igualmente el barril de petróleo. La variación anual de el IPC ha dado a notar que la inflación ha crecido, eso también daría una explicación a la reducción de los registros de los carros.
+
+Nota: los datos se obtienen de la página del Banco de la República[3].
   
+<h3><b>Evaluación de retraso de las variables(lag).</b></h3>
+
+Antes de comenzar a analizar los modelos, se debe tener en cuenta que variables cómo el dólar(TRM) o la popularidad pueden influir a futuro(variable con retraso) con las unidades de vehículos registradas.
+
+<b>Para la TRM:</b>
+
+A partir de el comando "ccf" de R que permite calcular la correlación cruzada entre variables específicas, se obtiene lo siguiente:
+
+<img src="D:/Documents/GitHub/Trabajo2/TRMlag.jpeg">
+
+Se puede ver que el coeficiente de correlación más influyente, se encuentra aproximadamente 2 meses atrás pero se interpreta que el coeficiente no es muy bueno ya que es muy cercano a 0. Se logra ver que hay una relación inversa muy leve en que a medida que el dólar sube, los registros de autos bajan.
+
+<b>Para la popularidad:</b>
+
+<img src="D:/Documents/GitHub/Trabajo2/POPlag.jpeg">
+
+Para esta gráfica se logra ver que los coeficientes de correlación son muy cercanos a 0, y que el más alto se encuentra aproximadamente 70 días atrás, no hay correlación fuerte.
+
+Ambas variables son importantes en la economía y en las ganas de un consumidor a la hora de comprar un vehículo (registro), pero al ser variables con tan poco enlace respecto a la correlación en el pasado, no es muy buena idea conservarlas.
 
 
-<b>Creación y selección de el modelo de predicción.</b>
+<h3><b>Creación y selección de el modelo de predicción.</b></h3>
 
 Inicialmente se intentó hacer una regresión lineal clásica con las variables anteriormente mencionadas(exceptuando año y día del mes), la cuál dio cómo resultado el siguiente modelo:
 
@@ -146,13 +167,15 @@ Ahora hay otro problema para abarcar: ¿Son las variables a usar realmente proye
 
 Para dar solución a esta problemática, se separan las variables en dos grupos: Variables sin necesidad de proyeccion (día del mes, año, mes, día de la semana) y las variables a proyectar(TRM,IPC,tasa de empleo, tasa de desempleo, índice de confianza al consumidor, precio de el barril de petróleo, salario mínimo, popularidad y variación anual del IPC). 
 
-Se decide entonces a probar con un modelo de regresión lineal generalizado Poisson solamente con las variables sin necesidad de proyección:
-```{r}
+Se decide entonces probar con un modelo de regresión lineal generalizado Poisson solamente con las variables sin necesidad de proyección:
+```{r,echo=FALSE}
 summary(mod_pois_glm)
 1-(mod_pois_glm$deviance/mod_pois_glm$null.deviance)
 ```
 
 Cómo se puede ver, nuestro $R^2$ se conservó de una manera impresionante, dando a entender que las variables que más influyen en nuestro modelo son las que carecen de la necesidad de proyección, tener un modelo así posee muchas ventajas, una de ellas es que se puede proyectar con mayor facilidad y sin restricciones a futuro -eso si- se debe tener en cuenta que el entrenamiento de el modelo sólo tuvo en cuenta lo comprendido entre 2012 y 2016 y que esas tendencias pueden desaparecer a medida que el tiempo pase.
+
+<br>
 
 <b>Validación de los datos</b>
 
@@ -163,7 +186,7 @@ Los datos poseen el siguiente aspecto:
 head(estim)
 ```
 
-A partir de las tantas fórmulas para calcular explicatividad de variables, se procede a usar la siguiente para el cálculo de el $R^2$.$$R^2=1-\frac{\sum_{i=1}^{n} (Y_i-\hat{Y_i})^2}{\sum_{i=1}^{n}(Y_i-\bar{Y})^2}$$
+A partir de las tantas fórmulas para calcular explicatividad de variables, se procede a usar la siguiente para el cálculo de el $pseudoR^2$.$$R^2=1-\frac{\sum_{i=1}^{n} (Y_i-\hat{Y_i})^2}{\sum_{i=1}^{n}(Y_i-\bar{Y})^2}$$
 
 
 ```{r,echo=FALSE}
@@ -173,8 +196,8 @@ A partir de las tantas fórmulas para calcular explicatividad de variables, se p
 Se obtiene un $R^2$ de validación de aproximadamente el 63% para los datos de el año 2017.
 
 
-
-<h3><b>Enfoque</b></h3>
+<br>
+<h3><b>Enfoque.</b></h3>
 <p style = "font-size:20px" align="justify">
 Después de todo este esfuerzo para construir este modelo que acabamos de ver, surgirá la pregunta: ¿Para qué todo esto? Pues bueno, el proyecto podría no tener un enfoque único, ya que este modelo podría ser de mucha utilidad para el estado o empresas privadas, a continuación veremos tres ejemplos prácticos.<br>
 En primer lugar y el ejemplo más trivial estaría en la contratación de personal, ya que el número de registros de vehículos en un día, se traduce en personas haciendo fila, así que este modelo serviría para hacer una contratación dinámica, es decir: Que se contrate más personal en los meses del año en los que más autos se registran para agilizar la atención y así mismo contratar menos personal en los meses con menos registros, para así ahorrar recursos.<br>
@@ -182,10 +205,17 @@ Como segundo ejemplo, está la infraestructura vial y políticas de movilidad, y
 Como último ejemplo, tenemos al sector privado, especificamente a las compañías que fabrican y venden autos, ya que estas sabiendo la porción de mercado que tienen frente a la competencia, antes de inundar el mercado con más autos de los que van a vender, podrían predecir estas cifras, para no incurrir en perdidas por tener demasiadas existencias de vehículos en venta. También puede servir a la hora de implementar políticas de expansión.
 </p><hr>
 
+<h3><b>Aplicación.</b></h3>
+<p style = "font-size:20px" align="justify">
+Con el objetivo de mostrar el resultado, se creó una aplicación web, a la que se puede acceder en el siguiente <a href="https://sarestrepoal.shinyapps.io/RegistrosRUNT/">enlace</a>, su funcionamiento es muy secillo, únicamente se debe seleccionar el rango de fechas que se quiere predecir, y la aplicación nos devolverá una lista de las predicciones diarias comprendidas en este rango, además hay un botón para generar un pequeño resumen descriptivo.<br>
+<i>También se hizo un video para promocionar la aplicación, que se puede ver en el siguiente <a href="https://www.youtube.com/watch?v=tk0mV9SlzPM&rel=0">enlace</a>.</i>
+</p><hr>
+
 <h3><b>Referencias:</b></h3>
 <p style = "font-size:20px" align="justify">
 1. <a href = "https://www.runt.com.co/registros-runt/rna"> Página del RUNT </a>
 2. <a href = "https://www.fedesarrollo.org.co/sites/default/files/encuestas_documentos/historico_indice_de_confianza_del_consumidor_eoc.pdf"> Indice de confianza del consumidor  </a>
+3. <a href = "http://www.banrep.gov.co/"> Banco de la república </a>
 </p><br>
 
 <p style = "font-size:20px" align="justify">
